@@ -62,4 +62,37 @@ router.post('/', (req, res) => {
     res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
     }});
 
+router.put('/:id', (req, res) => {
+    const postData =  req.body
+    const id = req.params.id
+    // console.log(req.body)
+    // console.log(`post Data`, postData
+    if (req.body.title && req.body.contents) {
+       data.findById(id)
+       .then(post => {
+        // console.log(post.title)
+        if (post.length === 0) {
+            res.status(404).json({ message: "The post with the specified ID does not exist." })
+        } else {
+             // console.log(`post Data`, postData)
+            data.update(id, postData)
+            .then(response => {
+            // console.log(`id`, id)
+            if (response === 1) {
+                // console.log(id)
+                data.findById(id)
+                .then(updatedPost => {
+                //  console.log(`updated post`, updatedpost)
+                res.status(200).json(updatedPost)})
+            } else {
+                res.status(500).json({ error: "Server Error" })
+            }}).catch(error => {
+            res.status(500).json({ error: "The post information could not be modified." })
+            })
+        }})
+    } else {
+        res.status(400).json({ Message: "Please provide title and contents for the post." })}
+    });
+
 module.exports = router;
+
