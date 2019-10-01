@@ -21,26 +21,36 @@ router.post('/', (req, res) => {
     } else {
     console.log(`got this far`)
     res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
-    }});
+}});
 
-router.post('/', (req, res) => {
-    const postData =  req.body
-    // console.log(req.body)
-    // console.log(`post Data`, postData
-    if (req.body.title && req.body.contents) {
-        // console.log(`title`, req.body.title)
-    data.insert(postData)
-    .then(id => data.findById(id.id))
-    .then(newpost => {
-        console.log(`new post`, newpost)
-        res.status(201).json(newpost)
-    }).catch(error => {
-        res.status(500).json({error: "There was an error while saving the post to the database"})
+router.post('/:id/comments', (req, res) => {
+    const id = req.params.id
+    data.findById(id)
+    .then(post => {
+        if (post.length === 0) {
+        res.status(404).json({ message: "The post with the specified ID does not exist." });
+        } else {
+            const commentData =  req.body
+            // console.log(req.body)
+            // console.log(`post Data`, postData
+            if (req.body.text) {
+                // console.log(`title`, req.body.title)
+            data.insertComment(commentData)
+            .then(id => data.findCommentById(id.id))
+            .then(newComment => {
+                // console.log(`new Comment`, newComment)
+                res.status(201).json(newComment)
+            }).catch(error => {
+                res.status(500).json({error: "There was an error while saving the post to the database"})
+            })
+            } else {
+            res.status(400).json({ errorMessage: "Please provide text for the comment." })}
+        }
     })
-    } else {
-    console.log(`got this far`)
-    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
-    }});
+    .catch(error => {
+        res.status(500).json({ error: "The post information could not be retrieved." });
+    });
+});
 
 router.get('/', (req, res) => {
     data.find()
@@ -84,7 +94,7 @@ router.get('/:id/comments', (req, res) => {
     .catch(error => {
         res.status(500).json({ error: "The post information could not be retrieved." });
     });
-    });
+});
 
 router.delete(`/:id`, (req, res) => {
     data.findById(req.params.id)
@@ -99,7 +109,7 @@ router.delete(`/:id`, (req, res) => {
       }).catch(error => {
         res.status(500).json({ error: "The post could not be removed" })
       })
-    });
+});
 
 router.put('/:id', (req, res) => {
     const postData =  req.body
@@ -131,7 +141,7 @@ router.put('/:id', (req, res) => {
         }})
     } else {
         res.status(400).json({ Message: "Please provide title and contents for the post." })}
-    });
+});
 
 module.exports = router;
 
