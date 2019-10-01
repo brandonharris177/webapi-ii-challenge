@@ -31,7 +31,7 @@ data.findById(req.params.id)
 router.delete(`/:id`, (req, res) => {
     data.findById(req.params.id)
       .then(post => {
-        console.log(post.title)
+        // console.log(post.title)
         if (post.length === 0) {
             res.status(404).json({ message: "The post with the specified ID does not exist." })
         } else {
@@ -41,6 +41,25 @@ router.delete(`/:id`, (req, res) => {
       }).catch(error => {
         res.status(500).json({ error: "The post could not be removed" })
       })
-    });  
+    });
+
+router.post('/', (req, res) => {
+    const postData =  req.body
+    // console.log(req.body)
+    // console.log(`post Data`, postData
+    if (req.body.title && req.body.contents) {
+        // console.log(`title`, req.body.title)
+    data.insert(postData)
+    .then(id => data.findById(id.id))
+    .then(newpost => {
+        console.log(`new post`, newpost)
+        res.status(201).json(newpost)
+    }).catch(error => {
+        res.status(500).json({error: "There was an error while saving the post to the database"})
+    })
+    } else {
+    console.log(`got this far`)
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+    }});
 
 module.exports = router;
