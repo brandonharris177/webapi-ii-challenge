@@ -13,20 +13,6 @@ router.get('/', (req, res) => {
         res.status(500).json({ error: "The posts information could not be retrieved." })
     })
 });
-
-router.get('/', (req, res) => {
-    Hubs.find(req.query)
-    .then(hubs => {
-      res.status(200).json(hubs);
-    })
-    .catch(error => {
-      // log error to database
-      console.log(error);
-      res.status(500).json({
-        message: 'Error retrieving the hubs',
-      });
-    });
-  });
   
 router.get('/:id', (req, res) => {
 data.findById(req.params.id)
@@ -41,5 +27,20 @@ data.findById(req.params.id)
     res.status(500).json({ error: "The post information could not be retrieved." });
 });
 });
+
+router.delete(`/:id`, (req, res) => {
+    data.findById(req.params.id)
+      .then(post => {
+        console.log(post.title)
+        if (post.length === 0) {
+            res.status(404).json({ message: "The post with the specified ID does not exist." })
+        } else {
+          data.remove(post)
+          res.status(200).json({ message: `${post[0].title} Deleted.` })
+        }
+      }).catch(error => {
+        res.status(500).json({ error: "The post could not be removed" })
+      })
+    });  
 
 module.exports = router;
