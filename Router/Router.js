@@ -4,6 +4,44 @@ const data = require('../data/db');
 
 const router = express.Router();
 
+router.post('/', (req, res) => {
+    const postData =  req.body
+    // console.log(req.body)
+    // console.log(`post Data`, postData
+    if (req.body.title && req.body.contents) {
+        // console.log(`title`, req.body.title)
+    data.insert(postData)
+    .then(id => data.findById(id.id))
+    .then(newpost => {
+        console.log(`new post`, newpost)
+        res.status(201).json(newpost)
+    }).catch(error => {
+        res.status(500).json({error: "There was an error while saving the post to the database"})
+    })
+    } else {
+    console.log(`got this far`)
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+    }});
+
+router.post('/', (req, res) => {
+    const postData =  req.body
+    // console.log(req.body)
+    // console.log(`post Data`, postData
+    if (req.body.title && req.body.contents) {
+        // console.log(`title`, req.body.title)
+    data.insert(postData)
+    .then(id => data.findById(id.id))
+    .then(newpost => {
+        console.log(`new post`, newpost)
+        res.status(201).json(newpost)
+    }).catch(error => {
+        res.status(500).json({error: "There was an error while saving the post to the database"})
+    })
+    } else {
+    console.log(`got this far`)
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+    }});
+
 router.get('/', (req, res) => {
     data.find()
     .then(posts => {
@@ -62,25 +100,6 @@ router.delete(`/:id`, (req, res) => {
         res.status(500).json({ error: "The post could not be removed" })
       })
     });
-
-router.post('/', (req, res) => {
-    const postData =  req.body
-    // console.log(req.body)
-    // console.log(`post Data`, postData
-    if (req.body.title && req.body.contents) {
-        // console.log(`title`, req.body.title)
-    data.insert(postData)
-    .then(id => data.findById(id.id))
-    .then(newpost => {
-        console.log(`new post`, newpost)
-        res.status(201).json(newpost)
-    }).catch(error => {
-        res.status(500).json({error: "There was an error while saving the post to the database"})
-    })
-    } else {
-    console.log(`got this far`)
-    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
-    }});
 
 router.put('/:id', (req, res) => {
     const postData =  req.body
